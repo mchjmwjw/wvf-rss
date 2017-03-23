@@ -43,11 +43,11 @@
 
     <div class="container" style="margin-top: 80px">
       <div class="row">
-        <div class="col-xs-12 col-md-3 push-md-9 col-xl-3 push-xl-9">
+        <div class="col-xs-12 col-md-3 push-md-9 col-xl-3 push-xl-9"> <!-- 左到右push 右往左pull -->
           <siderbar></siderbar>
         </div>
         <div class="col-xs-12 col-md-9 pull-md-3 col-xl-9 pull-xl-3">
-          <router-view></router-view>
+          <router-view></router-view> <!-- 此处渲染视图组件，渲染嵌套组件(若加上name属性，则为命名视图，渲染对应的路由配置中 components 下的相应组件) -->
         </div>
       </div>
     </div>
@@ -55,10 +55,10 @@
 </template>
 
 <script>
-  import Siderbar from './components/Siderbar.vue'
-  export default{
+  import Siderbar from './components/Siderbar.vue'  // 导入Sidebar组件
+  export default{     // 导出父组件
       components: {
-          'siderbar': Siderbar
+          'siderbar': Siderbar      // 局部注册Sidebar组件, 当前组件为其父模板
       }
   }
 </script>

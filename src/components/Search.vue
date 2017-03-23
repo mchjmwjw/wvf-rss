@@ -34,7 +34,8 @@
         </div>
         <div class="card card-block text-xs-right" v-if="hasNextPage && searchResultJson && !isSearching">
             <h5 class="btn btn-outline-success btn-block" @click="searchMp(page)"> 下一页 ({{page}})
-                <i class="fa fa-angle-double-right"></i></h5>
+                <i class="fa fa-angle-double-right"></i>
+            </h5>
         </div>
     </div>
 </template>
@@ -49,13 +50,24 @@
           searchResultJson: '',
           isSearching: false,
           page: 1,
-          hasNextPage: true
+          hasNextPage: true,
+          hasPrePage: false
         }
       },
+//      data:function(){
+//        return {
+//          searchKey: '',
+//          searchInput: '',
+//          searchResultJson: '',
+//          isSearching: false,
+//          page: 1,
+//          hasNextPage: true,
+//          hasPrePage: false
+//        }
+//      },
       computed: {
         subscribeList() {   // this 指向当前vue实例
-          // 从vuex store 中取出数据
-          return this.$store.state.subscribeList
+          return this.$store.state.subscribeList     // 从vuex store 中取出数据
         },
         mpList() {
           return this.$store.state.mpList
@@ -69,17 +81,20 @@
             this.$store.dispatch('clearSearchResult', 'clear');
             this.page = 1;
             this.hasNextPage = true;
+            this.hasPrePage = false;
           }
-          this.$nextTick(function () { });
-          this.$http.jsonp("http://weixin.sogou.com/weixinwap?_rtype=json&ie=utf8",
-            {
+          // DOM 还没有更新
+          this.$nextTick(function () {
+            // DOM 更新了
+          });
+          this.$http.jsonp("http://weixin.sogou.com/weixinwap?_rtype=json&ie=utf8", {
               params: {
                 page: pg,
                 type: 1, //公众号
                 query: this.searchKey
               },
               jsonp:'cb'
-            }).then(
+          }).then(
               function(res){
               // 处理搜狗返回的数据，又臭又长
                 this.searchResultJson = JSON.parse(res.bodyText);
@@ -129,6 +144,9 @@
                 }
                 this.$store.dispatch('addSearchResultList', onePageResults);    // 通知 vuex保存搜索结果
                 this.searchInput = '';
+                if(this.page > 1){
+                  this.hasPrePage = true;
+                }
                 this.page = this.page+1;
                 if (this.page > this.searchResultJson.totalPages) {
                     this.hasNextPage = false;
